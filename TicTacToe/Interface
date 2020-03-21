@@ -1,1 +1,41 @@
+import numpy as np
+import random
 
+board = [[' ', ' ', ' '],
+         [' ', ' ', ' '],
+         [' ', ' ', ' ']]
+
+def check_board(board, pos):
+    if board[pos[0]-1][pos[1]-1] == ' ':
+        return True
+    else:
+        print("Already occupied! Try again \n")
+        return False
+
+def possibilities(board): 
+    l = [(ind,ind2) for ind,i in enumerate(board) 
+                  for ind2,y in enumerate(i) if y == ' ']
+    return l
+
+def userInput():
+    pos = list(map(int, input("Enter the row and column number of your move: ").strip().split()))[:2]
+    return pos
+
+def randInput(board):
+   pos = random.choice(possibilities(board))
+   return pos
+    
+c = 1
+while any(' ' in sublist for sublist in board):
+    if c % 2 == 1:
+        pos = userInput()
+        if check_board(board, pos):
+            board[pos[0]-1][pos[1]-1] = 'X'
+        else:
+            continue
+    else:
+        pos = randInput(board)
+        board[pos[0]-1][pos[1]-1] = 'O'
+    c += 1
+    for i in board:
+        print(*i)
