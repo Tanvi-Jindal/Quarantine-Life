@@ -1,4 +1,5 @@
-import numpy as np
+from tkinter import *
+from tkinter import messagebox
 import random
 
 board = [[' ', ' ', ' '],
@@ -24,18 +25,53 @@ def userInput():
 def randInput(board):
    pos = random.choice(possibilities(board))
    return pos
-    
-c = 1
-while any(' ' in sublist for sublist in board):
-    if c % 2 == 1:
-        pos = userInput()
-        if check_board(board, pos):
-            board[pos[0]-1][pos[1]-1] = 'X'
+
+def checkrow(board):
+    a = any(all(x == 'X' for x in row) for row in board)
+    b = any(all(x == 'O' for x in row) for row in board)
+    return max(a, b) > 0
+
+def checkcol(board):
+    l = [(ind,ind2) for ind,i in enumerate(board) 
+                  for ind2,y in enumerate(i)]
+    board1 = [[' ', ' ', ' '],
+              [' ', ' ', ' '],
+              [' ', ' ', ' ']]
+    for i in l:
+        board1[i[1]][i[0]] = board[i[0]][i[1]]
+    return checkrow(board1)
+
+def checkdiag(board):
+    l = [(ind,ind2) for ind,i in enumerate(board) 
+                  for ind2,y in enumerate(i) if ind == ind2]
+    l1 = [(ind,ind2) for ind,i in enumerate(board) 
+                  for ind2,y in enumerate(i) if ind + ind2 == 2]
+    board1 = [[' ', ' ', ' '],
+              [' ', ' ', ' ']]
+    for i in range(len(l)):
+        board1[0][i] = board[l[i][0]][l[i][1]]
+        board1[1][i] = board[l[i][0]][l1[i][1]]      
+    return checkrow(board1)
+
+def button(frame):          #Function to define a button
+    b=Button(frame,padx=1,bg="papaya whip",width=3,text="   ",font=('arial',60,'bold'),relief="sunken",bd=10)
+    return b
+
+def game():    
+    c = 1
+    while any(' ' in sublist for sublist in board):
+        if checkrow(board) | checkcol(board) | checkdiag(board):
+            print("Game over!")
+            break
+        if c % 2 == 1:
+            pos = userInput()
+            if check_board(board, pos):
+                board[pos[0]-1][pos[1]-1] = 'X'
+            else:
+                continue
         else:
-            continue
-    else:
-        pos = randInput(board)
-        board[pos[0]-1][pos[1]-1] = 'O'
-    c += 1
-    for i in board:
-        print(*i)
+            pos = randInput(board)
+            board[pos[0]][pos[1]] = 'O'
+        c += 1
+        for i in board:
+            print(*i)            
